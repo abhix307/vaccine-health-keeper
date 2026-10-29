@@ -124,3 +124,33 @@ def test_no_next_dose_records_handled_everywhere(client, logged_in, app, db):
         resp = client.get(url)
         assert resp.status_code == 200
         assert "SoloShot" in resp.get_data(as_text=True)
+
+
+def test_dashboard_alarm_banner_and_chips(client, logged_in, app, db):
+    """Overdue/due-today doses surface as an alarm banner + countdown chips."""
+    from datetime import timedelta
+    today = date.today()
+    with app.app_context():
+        add_vaccination(logged_in.id, name="LateShot", vdate=today - timedelta(days=200),
+                        ndate=today - timedelta(days=3))
+        add_vaccination(logged_in.id, name="NowShot", vdate=today - timedelta(days=100),
+                        ndate=today)
+        add_vaccination(logged_in.id, name="SoonShot", vdate=today - timedelta(days=10),
+                        ndate=today + timedelta(days=12))
+    html = client.get("/dashboard/").get_data(as_text=True)
+    assert "alarm-banner" in html
+    assert "1 dose overdue" in html and "1 due today" in html
+    assert "3 days overdue" in html          # countdown chip
+    assert "due today" in html
+    assert "in 12 days" in html
+    assert "Alarms" in html
+    assert 'id="alarmSoundToggle"' in html
+
+
+def test_dashboard_no_alarm_banner_when_nothing_due(client, logged_in, app, db):
+    from datetime import timedelta
+    with app.app_context():
+        add_vaccination(logged_in.id, name="FutureShot", ndate=date.today() + timedelta(days=30))
+    html = client.get("/dashboard/").get_data(as_text=True)
+    assert "alarm-banner" not in html
+    assert "in 30 days" in html

@@ -10,6 +10,25 @@
   <a href="{{ url_for('vaccinations.create') }}" class="btn btn-primary no-print">{{ icon('plus', 16) }} Add vaccination</a>
 </div>
 
+{% if stats.overdue or stats.due_today %}
+<div class="alarm-banner mb-4 no-print" role="alert">
+  <span class="pulse-dot" aria-hidden="true"></span>
+  <div class="alarm-banner-text">
+    <strong>
+      {% if stats.overdue and stats.due_today %}
+        {{ stats.overdue }} dose{{ 's' if stats.overdue != 1 }} overdue · {{ stats.due_today }} due today
+      {% elif stats.overdue %}
+        {{ stats.overdue }} dose{{ 's' if stats.overdue != 1 }} overdue
+      {% else %}
+        {{ stats.due_today }} dose{{ 's' if stats.due_today != 1 }} due today
+      {% endif %}
+    </strong>
+    <span class="d-none d-sm-inline">— check your alarms below and consult your healthcare provider.</span>
+  </div>
+  <a href="{{ url_for('vaccinations.index', status='overdue' if stats.overdue else 'due_today') }}" class="alarm-banner-link">View</a>
+</div>
+{% endif %}
+
 <div class="row g-3 mb-4">
   <div class="col-6 col-lg-3">
     <div class="card stat-card border-0 shadow-sm h-100">
@@ -68,30 +87,46 @@
 <div class="row g-4">
   <div class="col-lg-7">
     <div class="card border-0 shadow-sm h-100">
-      <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h2 class="h5 fw-semibold mb-0">{{ icon('bell', 18) }} Reminders</h2>
-        <a href="{{ url_for('vaccinations.index') }}" class="small">View all</a>
+      <div class="card-header bg-white d-flex justify-content-between align-items-center gap-2">
+        <h2 class="h5 fw-semibold mb-0">{{ icon('bell', 18) }} Alarms</h2>
+        <div class="d-flex align-items-center gap-2 no-print">
+          <button type="button" id="alarmSoundToggle" class="btn btn-sm btn-outline-secondary alarm-sound-btn"
+                  data-active-alarms="{{ '1' if (stats.overdue or stats.due_today) else '0' }}"
+                  aria-pressed="false" title="Play a chime when you open the dashboard with due or overdue doses">
+            {{ icon('bell', 13) }} <span class="alarm-sound-label">Sound off</span>
+          </button>
+          <a href="{{ url_for('vaccinations.index') }}" class="small">View all</a>
+        </div>
       </div>
       <div class="card-body">
         {% if upcoming %}
-        <ul class="list-unstyled m-0">
+        <ul class="list-unstyled m-0 alarm-list">
           {% for vacc, status in upcoming %}
-          <li class="reminder-item d-flex justify-content-between align-items-center gap-2 py-3 {{ 'border-bottom' if not loop.last }}">
+          {% set delta = (vacc.next_dose_date - today).days %}
+          <li class="reminder-item alarm-row d-flex justify-content-between align-items-center gap-2 py-3 {{ 'border-bottom' if not loop.last }}">
             <div class="d-flex align-items-center gap-3">
-              <span class="feature-icon {{ {'overdue':'icon-red','due_today':'icon-teal','upcoming':'icon-blue'}[status] }}">
+              <span class="alarm-icon feature-icon {{ {'overdue':'icon-red','due_today':'icon-red','upcoming':'icon-blue'}[status] }}">
+                {% if status in ('overdue', 'due_today') %}<span class="pulse-dot pulse-dot-sm" aria-hidden="true"></span>{% endif %}
                 {{ icon({'overdue':'alert','due_today':'clock','upcoming':'calendar'}[status], 18) }}
               </span>
               <div>
                 <a href="{{ url_for('vaccinations.detail', record_id=vacc.id) }}" class="fw-semibold text-decoration-none">{{ vacc.vaccine_name }}</a>
-                <div class="small text-secondary">Next dose ({{ vacc.dose_number + 1 }}) — {{ vacc.next_dose_date | datefmt }}</div>
+                <div class="small text-secondary">Dose {{ vacc.dose_number + 1 }} · {{ vacc.next_dose_date | datefmt }}</div>
               </div>
             </div>
-            {{ status_badge(status, {'administered':'Administered','upcoming':'Upcoming','due_today':'Due today','overdue':'Overdue'}) }}
+            <div class="d-flex flex-column align-items-end gap-1">
+              <span class="count-chip count-{{ status }}">
+                {% if status == 'overdue' %}{{ delta | abs }} day{{ 's' if delta != -1 }} overdue
+                {% elif status == 'due_today' %}due today
+                {% else %}in {{ delta }} day{{ 's' if delta != 1 }}{% endif %}
+              </span>
+              {{ status_badge(status, {'administered':'Administered','upcoming':'Upcoming','due_today':'Due today','overdue':'Overdue'}) }}
+            </div>
           </li>
           {% endfor %}
         </ul>
         {% else %}
-        {{ empty_state("Nothing due right now", "You have no upcoming, due-today, or overdue doses. Add a next-dose date to any record to get a reminder here.", icon_name='bell') }}
+        {{ empty_state("No alarms set", "Nothing is due right now. Add a next-dose date to any vaccination record and it will ring here as an alarm.", icon_name='bell') }}
         {% endif %}
       </div>
     </div>

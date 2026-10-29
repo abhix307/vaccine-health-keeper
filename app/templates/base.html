@@ -7,7 +7,7 @@
   <title>{% block title %}Vaccine &amp; Health Record Keeper{% endblock %}</title>
   <meta name="description" content="A student portfolio project for securely tracking vaccination history, health profile, allergies, and emergency contacts.">
   <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap.min.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=4) }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=5) }}">
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -87,7 +87,7 @@
 
   {% block modals %}{% endblock %}
   <script src="{{ url_for('static', filename='vendor/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/main.js', v=2) }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js', v=5) }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>
