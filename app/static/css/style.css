@@ -840,3 +840,57 @@ a:hover { color: var(--vt-blue-dark); }
         padding: 1rem;
     }
 }
+
+
+
+
+
+/* Vaccination form polish */
+.vaccination-form-card {
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.vaccination-form-card .card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e8eef2;
+}
+
+.vaccination-form-card .card-body {
+    padding: 1.5rem !important;
+}
+
+.vaccination-form-card .alert-info {
+    border: 1px solid #d8ecee;
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+.vaccination-form-card form .row {
+    row-gap: 0.5rem;
+}
+
+.vaccination-form-card form .form-control,
+.vaccination-form-card form .form-select {
+    border-radius: 9px;
+}
+
+.vaccination-form-card form .form-control:focus,
+.vaccination-form-card form .form-select:focus {
+    border-color: #56aaa7;
+    box-shadow: 0 0 0 0.2rem rgba(32, 145, 140, 0.12);
+}
+
+@media (max-width: 576px) {
+    .vaccination-form-card .card-header {
+        padding: 1rem;
+    }
+
+    .vaccination-form-card .card-body {
+        padding: 1rem !important;
+    }
+
+    .vaccination-form-card form .btn {
+        min-height: 42px;
+    }
+}

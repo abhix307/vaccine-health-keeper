@@ -7,7 +7,9 @@
     <nav aria-label="Breadcrumb" class="mb-3 no-print">
       <a href="{{ url_for('vaccinations.index') }}" class="small text-decoration-none">{{ icon('arrow-left', 14) }} Back to records</a>
     </nav>
-    <div class="card border-0 shadow-sm">
+    
+<div class="card border-0 shadow-sm vaccination-form-card">
+    
       <div class="card-header bg-white">
         <h1 class="h4 fw-bold mb-0">{{ icon('syringe', 20) }} {{ 'Edit vaccination record' if mode == 'edit' else 'Add vaccination record' }}</h1>
       </div>
