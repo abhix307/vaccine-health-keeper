@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="same-origin">
+  <title>{% block title %}Vaccine &amp; Health Record Keeper{% endblock %}</title>
+  <meta name="description" content="A student portfolio project for securely tracking vaccination history, health profile, allergies, and emergency contacts.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
+</head>
+<body class="d-flex flex-column min-vh-100">
+  {% from "macros.html" import icon %}
+  <a class="visually-hidden-focusable skip-link" href="#main-content">Skip to main content</a>
+  <nav class="navbar navbar-expand-lg app-navbar sticky-top no-print" aria-label="Main navigation">
+    <div class="container">
+      <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+        <span class="brand-mark">{{ icon('shield', 22) }}</span>
+        <span>Vacc<span class="text-teal">Track</span></span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+              aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
+          {% if current_user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'dashboard.index' }}" href="{{ url_for('dashboard.index') }}">{{ icon('dashboard', 16) }} Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link {{ 'active' if request.blueprint == 'vaccinations' }}" href="{{ url_for('vaccinations.index') }}">{{ icon('syringe', 16) }} Vaccinations</a></li>
+          <li class="nav-item"><a class="nav-link {{ 'active' if request.blueprint == 'health' }}" href="{{ url_for('health.profile') }}">{{ icon('heart', 16) }} Health</a></li>
+          <li class="nav-item"><a class="nav-link {{ 'active' if request.endpoint == 'dashboard.settings' }}" href="{{ url_for('dashboard.settings') }}">{{ icon('settings', 16) }} Settings</a></li>
+          <li class="nav-item ms-lg-2">
+            <form method="POST" action="{{ url_for('auth.logout') }}" class="d-inline">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-outline-light btn-sm nav-logout">{{ icon('logout', 16) }} Sign out</button>
+            </form>
+          </li>
+          {% else %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Sign in</a></li>
+          <li class="nav-item ms-lg-2"><a class="btn btn-teal btn-sm" href="{{ url_for('auth.register') }}">Create account</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" class="flex-grow-1">
+    <div class="container py-4">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-stack no-print" aria-live="polite">
+          {% for category, message in messages %}
+          <div class="alert alert-{{ category if category in ('success','danger','warning','info') else 'info' }} alert-dismissible fade show d-flex align-items-center gap-2" role="alert">
+            {% if category == 'success' %}{{ icon('check', 18) }}
+            {% elif category == 'danger' %}{{ icon('alert', 18) }}
+            {% else %}{{ icon('bell', 18) }}{% endif %}
+            <div>{{ message }}</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="app-footer mt-auto no-print">
+    <div class="container py-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-8">
+          <p class="mb-1 fw-semibold">Vaccine &amp; Health Record Keeper</p>
+          <p class="mb-0 small">
+            A student portfolio project. It is <strong>not</strong> a medical device and provides no diagnosis
+            or prescribing advice. Always follow the instructions of a qualified healthcare professional.
+          </p>
+        </div>
+        <div class="col-md-4 text-md-end small">
+          <p class="mb-1">Data is stored per-account and never shared.</p>
+          <p class="mb-0">&copy; {{ today.year }} VaccTrack Demo</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  {% block modals %}{% endblock %}
+  <script src="{{ url_for('static', filename='vendor/bootstrap.bundle.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

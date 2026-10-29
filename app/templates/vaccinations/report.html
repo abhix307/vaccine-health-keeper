@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon %}
+{% block title %}Vaccination report — VaccTrack{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-9">
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+      <a href="{{ url_for('vaccinations.index') }}" class="small text-decoration-none">{{ icon('arrow-left', 14) }} Back to records</a>
+      <button type="button" class="btn btn-primary" data-print-page>{{ icon('print', 16) }} Print</button>
+    </div>
+
+    <div class="card border-0 shadow-sm report-card">
+      <div class="card-body p-4 p-md-5">
+        <div class="report-header d-flex flex-wrap justify-content-between align-items-start gap-3 border-bottom pb-3 mb-4">
+          <div>
+            <h1 class="h4 fw-bold mb-1">Vaccination History Report</h1>
+            <p class="text-secondary small mb-0">
+              {{ current_user.display_name }} · {{ current_user.email }}<br>
+              Printed on {{ printed_on | datefmt('%d %B %Y') }} · VaccTrack (student portfolio project — not an official medical document)
+            </p>
+          </div>
+          <div class="text-end small text-secondary">
+            Total doses recorded: <strong class="text-dark">{{ records | length }}</strong>
+          </div>
+        </div>
+
+        {% if records %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle report-table">
+            <caption class="visually-hidden">Complete vaccination history</caption>
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Vaccine</th>
+                <th scope="col">Dose</th>
+                <th scope="col">Administered</th>
+                <th scope="col">Next dose</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for vacc in records %}
+              <tr>
+                <td class="text-secondary">{{ loop.index }}</td>
+                <td class="fw-semibold">{{ vacc.vaccine_name }}</td>
+                <td>{{ vacc.dose_number }}</td>
+                <td>{{ vacc.vaccination_date | datefmt }}</td>
+                <td>{{ vacc.next_dose_date | datefmt or '—' }}</td>
+                <td>{{ {'administered':'Administered','upcoming':'Upcoming','due_today':'Due today','overdue':'Overdue'}[statuses[vacc.id]] }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="small text-secondary mt-4 mb-0">
+          Status is computed from the dates recorded by the account owner against today's date
+          ({{ printed_on | datefmt }}). Dose schedules should always follow the instructions of a
+          qualified healthcare professional or an authoritative national immunisation schedule.
+        </p>
+        {% else %}
+        <p class="text-secondary text-center py-4 mb-0">No vaccination records to report.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

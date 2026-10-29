@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, render_field %}
+{% block title %}Health profile — VaccTrack{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-xl-7">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <h1 class="h3 fw-bold mb-0">{{ icon('heart', 24) }} Health profile</h1>
+      <div class="btn-group no-print" role="group" aria-label="Related pages">
+        <a href="{{ url_for('health.allergies') }}" class="btn btn-outline-secondary btn-sm">Allergies</a>
+        <a href="{{ url_for('health.contacts') }}" class="btn btn-outline-secondary btn-sm">Emergency contacts</a>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <p class="text-secondary small">All fields are optional. Share only what you're comfortable storing.</p>
+        <form method="POST" novalidate data-loading-form>
+          {{ form.hidden_tag() }}
+          <div class="row">
+            <div class="col-sm-6">{{ render_field(form.date_of_birth) }}</div>
+            <div class="col-sm-6">{{ render_field(form.blood_group) }}</div>
+          </div>
+          {{ render_field(form.health_notes) }}
+          <div class="d-flex align-items-center gap-3 no-print">
+            <button type="submit" class="btn btn-primary" data-loading-button>
+              <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+              Save profile
+            </button>
+            {% if profile %}<span class="small text-secondary">Last updated {{ profile.updated_at | datefmt('%d %b %Y, %H:%M') }}</span>{% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+
+    {% if profile and profile.age is not none %}
+    <div class="card border-0 shadow-sm mt-4">
+      <div class="card-body d-flex align-items-center gap-3">
+        <span class="feature-icon icon-teal">{{ icon('calendar', 20) }}</span>
+        <div>
+          <div class="fw-semibold">Age: {{ profile.age }} years</div>
+          <div class="small text-secondary">Calculated from your date of birth ({{ profile.date_of_birth | datefmt }}).</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

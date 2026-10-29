@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, render_field %}
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-md-7 col-lg-5 col-xl-4">
+    <div class="card auth-card border-0 shadow-sm">
+      <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+          <span class="auth-icon mx-auto mb-3 d-inline-flex">{{ icon('shield', 26) }}</span>
+          <h1 class="h4 fw-bold mb-1">{% block auth_title %}{% endblock %}</h1>
+          <p class="text-secondary small mb-0">{% block auth_subtitle %}{% endblock %}</p>
+        </div>
+        <form method="POST" novalidate data-loading-form>
+          {{ form.hidden_tag() }}
+          {% block auth_fields %}{% endblock %}
+          {% block auth_submit %}{% endblock %}
+        </form>
+        {% block auth_footer %}{% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

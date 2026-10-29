@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, empty_state, confirm_dialog %}
+{% block title %}Allergies — VaccTrack{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 no-print">
+  <div>
+    <h1 class="h3 fw-bold mb-1">{{ icon('alert', 24) }} Allergies</h1>
+    <p class="text-secondary small mb-0">Keep this list current — it can be critical in an emergency.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('health.profile') }}" class="btn btn-outline-secondary">Profile</a>
+    <a href="{{ url_for('health.allergy_new') }}" class="btn btn-primary">{{ icon('plus', 16) }} Add allergy</a>
+  </div>
+</div>
+
+{% if allergies %}
+<div class="row g-3">
+  {% for item in allergies %}
+  <div class="col-md-6 col-xl-4">
+    <div class="card allergy-card border-0 shadow-sm h-100 severity-{{ item.severity | lower }}">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h2 class="h5 fw-bold mb-0">{{ item.allergen }}</h2>
+          <span class="badge {{ {'Mild':'badge-success','Moderate':'badge-warning','Severe':'badge-danger'}[item.severity] }}">{{ item.severity }}</span>
+        </div>
+        {% if item.notes %}<p class="text-secondary small mb-3" style="white-space:pre-line;">{{ item.notes }}</p>{% endif %}
+        <div class="d-flex gap-2 no-print">
+          <a href="{{ url_for('health.allergy_edit', item_id=item.id) }}" class="btn btn-sm btn-outline-secondary">{{ icon('edit', 14) }} Edit</a>
+          <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteAllergy{{ item.id }}">{{ icon('trash', 14) }} Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card border-0 shadow-sm">
+  {{ empty_state("No allergies recorded", "If you have known allergies (medications, food, insect stings...), add them here so they're always at hand. If you have none, you can leave this empty.", action_url=url_for('health.allergy_new'), action_label="Add an allergy", icon_name='alert') }}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block modals %}
+{% for item in allergies %}
+{% call confirm_dialog('deleteAllergy' ~ item.id, 'Delete allergy?', url_for('health.allergy_delete', item_id=item.id)) %}
+This will permanently remove the allergy record for <strong>{{ item.allergen }}</strong>.
+{% endcall %}
+{% endfor %}
+{% endblock %}

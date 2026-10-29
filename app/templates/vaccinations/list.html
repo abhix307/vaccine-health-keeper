@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, empty_state, status_badge %}
+{% block title %}Vaccinations — VaccTrack{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 no-print">
+  <h1 class="h3 fw-bold mb-0">{{ icon('syringe', 24) }} Vaccination records</h1>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('vaccinations.report') }}" class="btn btn-outline-secondary">{{ icon('print', 16) }} Print report</a>
+    <a href="{{ url_for('vaccinations.create') }}" class="btn btn-primary">{{ icon('plus', 16) }} Add record</a>
+  </div>
+</div>
+
+{% if filter_error %}
+<div class="alert alert-warning py-2 no-print">{{ icon('alert', 16) }} {{ filter_error }}</div>
+{% endif %}
+
+<form method="GET" action="{{ url_for('vaccinations.index') }}" class="card border-0 shadow-sm mb-4 no-print filter-card" aria-label="Search and filter vaccinations">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-4">
+        <label for="q" class="form-label small fw-semibold text-secondary mb-1">Search by vaccine name</label>
+        <div class="input-group">
+          <span class="input-group-text bg-white">{{ icon('search', 16) }}</span>
+          <input type="search" class="form-control" id="q" name="q" value="{{ query }}" placeholder="e.g. Hepatitis">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label for="status" class="form-label small fw-semibold text-secondary mb-1">Status</label>
+        <select class="form-select" id="status" name="status">
+          <option value="">All statuses</option>
+          {% for key, label in status_labels.items() %}
+          <option value="{{ key }}" {{ 'selected' if status_filter == key }}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label for="date_from" class="form-label small fw-semibold text-secondary mb-1">Administered from</label>
+        <input type="date" class="form-control" id="date_from" name="date_from" value="{{ date_from }}">
+      </div>
+      <div class="col-md-2">
+        <label for="date_to" class="form-label small fw-semibold text-secondary mb-1">to</label>
+        <input type="date" class="form-control" id="date_to" name="date_to" value="{{ date_to }}">
+      </div>
+      <div class="col-md-1 d-grid">
+        <button type="submit" class="btn btn-primary">{{ icon('search', 16) }}<span class="visually-hidden">Apply filters</span></button>
+      </div>
+    </div>
+    {% if has_filters %}
+    <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
+      <span class="small text-secondary">Filters active — {{ total }} record{{ '' if total == 1 else 's' }} found.</span>
+      <a href="{{ url_for('vaccinations.index') }}" class="btn btn-sm btn-outline-secondary">✕ Clear filters</a>
+    </div>
+    {% endif %}
+  </div>
+</form>
+
+{% if vaccinations %}
+<div class="card border-0 shadow-sm">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0 vaccination-table">
+      <caption class="visually-hidden">Your vaccination records, newest first</caption>
+      <thead>
+        <tr>
+          <th scope="col">Vaccine</th>
+          <th scope="col" class="d-none d-md-table-cell">Dose</th>
+          <th scope="col">Administered</th>
+          <th scope="col" class="d-none d-sm-table-cell">Next dose</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="text-end no-print"><span class="visually-hidden">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vacc in vaccinations %}
+        <tr>
+          <td>
+            <a href="{{ url_for('vaccinations.detail', record_id=vacc.id) }}" class="fw-semibold text-decoration-none">{{ vacc.vaccine_name }}</a>
+            {% if vacc.notes %}<div class="small text-secondary text-truncate record-notes" style="max-width:18rem;">{{ vacc.notes }}</div>{% endif %}
+          </td>
+          <td class="d-none d-md-table-cell">Dose {{ vacc.dose_number }}</td>
+          <td>{{ vacc.vaccination_date | datefmt }}</td>
+          <td class="d-none d-sm-table-cell">{{ vacc.next_dose_date | datefmt or '—' }}</td>
+          <td>{{ status_badge(statuses[vacc.id], status_labels) }}</td>
+          <td class="text-end no-print">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Actions for {{ vacc.vaccine_name }} dose {{ vacc.dose_number }}">
+              <a href="{{ url_for('vaccinations.edit', record_id=vacc.id) }}" class="btn btn-outline-secondary" title="Edit" aria-label="Edit {{ vacc.vaccine_name }}">{{ icon('edit', 15) }}</a>
+              <button type="button" class="btn btn-outline-danger" title="Delete" aria-label="Delete {{ vacc.vaccine_name }}"
+                      data-bs-toggle="modal" data-bs-target="#deleteVacc{{ vacc.id }}">{{ icon('trash', 15) }}</button>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if total_pages > 1 %}
+<nav class="mt-4 no-print" aria-label="Pagination">
+  <ul class="pagination justify-content-center mb-0">
+    <li class="page-item {{ 'disabled' if page <= 1 }}">
+      <a class="page-link" href="{{ url_for('vaccinations.index', page=page-1, q=query or None, status=status_filter or None, date_from=date_from or None, date_to=date_to or None) }}" aria-label="Previous page">&laquo;</a>
+    </li>
+    {% for p in range(1, total_pages + 1) %}
+    <li class="page-item {{ 'active' if p == page }}">
+      <a class="page-link" href="{{ url_for('vaccinations.index', page=p, q=query or None, status=status_filter or None, date_from=date_from or None, date_to=date_to or None) }}">{{ p }}</a>
+    </li>
+    {% endfor %}
+    <li class="page-item {{ 'disabled' if page >= total_pages }}">
+      <a class="page-link" href="{{ url_for('vaccinations.index', page=page+1, q=query or None, status=status_filter or None, date_from=date_from or None, date_to=date_to or None) }}" aria-label="Next page">&raquo;</a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="card border-0 shadow-sm">
+  {% if has_filters %}
+  {{ empty_state("No records match your filters", "Try a different search term, status, or date range.", action_url=url_for('vaccinations.index'), action_label="Clear filters", icon_name='search') }}
+  {% else %}
+  {{ empty_state("No vaccination records yet", "Add your first administered dose to start building your vaccination history. Only record doses that were actually administered, with dates given by your healthcare provider.", action_url=url_for('vaccinations.create'), action_label="Add your first record", icon_name='syringe') }}
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block modals %}
+{% from "macros.html" import confirm_dialog %}
+{% for vacc in vaccinations %}
+{% call confirm_dialog('deleteVacc' ~ vacc.id, 'Delete vaccination record?', url_for('vaccinations.delete', record_id=vacc.id)) %}
+This will permanently remove the record for <strong>{{ vacc.vaccine_name }}</strong>
+(dose {{ vacc.dose_number }}, administered {{ vacc.vaccination_date | datefmt }}).
+{% endcall %}
+{% endfor %}
+{% endblock %}

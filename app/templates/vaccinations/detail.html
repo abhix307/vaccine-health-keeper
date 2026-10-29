@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, status_badge, confirm_dialog %}
+{% block title %}{{ record.vaccine_name }} — VaccTrack{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8 col-xl-7">
+    <nav aria-label="Breadcrumb" class="mb-3 no-print">
+      <a href="{{ url_for('vaccinations.index') }}" class="small text-decoration-none">{{ icon('arrow-left', 14) }} Back to records</a>
+    </nav>
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div>
+          <h1 class="h4 fw-bold mb-1">{{ record.vaccine_name }}</h1>
+          <p class="text-secondary small mb-0">Dose {{ record.dose_number }} · Administered {{ record.vaccination_date | datefmt('%A, %d %B %Y') }}</p>
+        </div>
+        {{ status_badge(status, {'administered':'Administered','upcoming':'Upcoming','due_today':'Due today','overdue':'Overdue'}) }}
+      </div>
+      <div class="card-body p-4">
+        <dl class="row mb-0">
+          <dt class="col-sm-4 text-secondary fw-normal">Vaccine name</dt>
+          <dd class="col-sm-8 fw-semibold">{{ record.vaccine_name }}</dd>
+
+          <dt class="col-sm-4 text-secondary fw-normal">Dose number</dt>
+          <dd class="col-sm-8 fw-semibold">{{ record.dose_number }}</dd>
+
+          <dt class="col-sm-4 text-secondary fw-normal">Date administered</dt>
+          <dd class="col-sm-8 fw-semibold">{{ record.vaccination_date | datefmt('%A, %d %B %Y') }}</dd>
+
+          <dt class="col-sm-4 text-secondary fw-normal">Next dose due</dt>
+          <dd class="col-sm-8 fw-semibold">
+            {% if record.next_dose_date %}
+              {{ record.next_dose_date | datefmt('%A, %d %B %Y') }}
+              {% if status == 'overdue' %}<span class="text-danger small">· overdue</span>
+              {% elif status == 'due_today' %}<span class="text-primary small">· due today</span>{% endif %}
+            {% else %}
+              <span class="text-secondary">Not scheduled</span>
+            {% endif %}
+          </dd>
+
+          <dt class="col-sm-4 text-secondary fw-normal">Notes</dt>
+          <dd class="col-sm-8" style="white-space:pre-line;">{{ record.notes or '—' }}</dd>
+
+          <dt class="col-sm-4 text-secondary fw-normal">Last updated</dt>
+          <dd class="col-sm-8 fw-semibold">{{ record.updated_at | datefmt('%d %b %Y, %H:%M') }}</dd>
+        </dl>
+      </div>
+      <div class="card-footer bg-white d-flex gap-2 no-print">
+        <a href="{{ url_for('vaccinations.edit', record_id=record.id) }}" class="btn btn-outline-primary">{{ icon('edit', 16) }} Edit</a>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteRecord">{{ icon('trash', 16) }} Delete</button>
+        <a href="{{ url_for('vaccinations.report') }}" class="btn btn-outline-secondary ms-auto">{{ icon('print', 16) }} Print report</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+{% call confirm_dialog('deleteRecord', 'Delete vaccination record?', url_for('vaccinations.delete', record_id=record.id)) %}
+This will permanently remove the record for <strong>{{ record.vaccine_name }}</strong> (dose {{ record.dose_number }}).
+{% endcall %}
+{% endblock %}

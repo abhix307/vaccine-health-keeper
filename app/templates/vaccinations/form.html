@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, render_field %}
+{% block title %}{{ 'Edit' if mode == 'edit' else 'Add' }} vaccination — VaccTrack{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7 col-xl-6">
+    <nav aria-label="Breadcrumb" class="mb-3 no-print">
+      <a href="{{ url_for('vaccinations.index') }}" class="small text-decoration-none">{{ icon('arrow-left', 14) }} Back to records</a>
+    </nav>
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white">
+        <h1 class="h4 fw-bold mb-0">{{ icon('syringe', 20) }} {{ 'Edit vaccination record' if mode == 'edit' else 'Add vaccination record' }}</h1>
+      </div>
+      <div class="card-body p-4">
+        <div class="alert alert-info py-2 small no-print">
+          {{ icon('alert', 14) }} Record only doses that were <strong>actually administered</strong>. Enter the next-dose
+          date only if a qualified healthcare professional has given you one — leave it blank if unknown.
+        </div>
+        <form method="POST" novalidate data-loading-form>
+          {{ form.hidden_tag() }}
+          {{ render_field(form.vaccine_name) }}
+          <div class="row">
+            <div class="col-sm-4">{{ render_field(form.dose_number) }}</div>
+            <div class="col-sm-4">{{ render_field(form.vaccination_date) }}</div>
+            <div class="col-sm-4">{{ render_field(form.next_dose_date) }}</div>
+          </div>
+          {{ render_field(form.notes) }}
+          <div class="d-flex gap-2 mt-2 no-print">
+            <button type="submit" class="btn btn-primary" data-loading-button>
+              <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+              {{ 'Save changes' if mode == 'edit' else 'Add record' }}
+            </button>
+            <a href="{{ url_for('vaccinations.detail', record_id=record.id) if mode == 'edit' else url_for('vaccinations.index') }}"
+               class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

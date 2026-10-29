@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, empty_state, confirm_dialog %}
+{% block title %}Emergency contacts — VaccTrack{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 no-print">
+  <div>
+    <h1 class="h3 fw-bold mb-1">{{ icon('phone', 24) }} Emergency contacts</h1>
+    <p class="text-secondary small mb-0">The people to call if something happens to you.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('health.profile') }}" class="btn btn-outline-secondary">Profile</a>
+    <a href="{{ url_for('health.contact_new') }}" class="btn btn-primary">{{ icon('plus', 16) }} Add contact</a>
+  </div>
+</div>
+
+{% if contacts %}
+<div class="row g-3">
+  {% for item in contacts %}
+  <div class="col-md-6 col-xl-4">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <span class="contact-avatar">{{ item.name | initials }}</span>
+          <div>
+            <h2 class="h5 fw-bold mb-0">{{ item.name }}</h2>
+            <div class="small text-secondary">{{ item.relationship }}</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <span class="text-secondary small">{{ icon('phone', 14) }}</span>
+          <a href="tel:{{ item.phone_number }}" class="fw-semibold text-decoration-none ms-1">{{ item.phone_number }}</a>
+        </div>
+        <div class="d-flex gap-2 no-print">
+          <a href="{{ url_for('health.contact_edit', item_id=item.id) }}" class="btn btn-sm btn-outline-secondary">{{ icon('edit', 14) }} Edit</a>
+          <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteContact{{ item.id }}">{{ icon('trash', 14) }} Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card border-0 shadow-sm">
+  {{ empty_state("No emergency contacts yet", "Add at least one person to contact in an emergency — a family member, friend, or neighbour.", action_url=url_for('health.contact_new'), action_label="Add a contact", icon_name='phone') }}
+</div>
+{% endif %}
+{% endblock %}
+
+{% block modals %}
+{% for item in contacts %}
+{% call confirm_dialog('deleteContact' ~ item.id, 'Delete emergency contact?', url_for('health.contact_delete', item_id=item.id)) %}
+This will permanently remove <strong>{{ item.name }}</strong> ({{ item.relationship }}) from your contacts.
+{% endcall %}
+{% endfor %}
+{% endblock %}

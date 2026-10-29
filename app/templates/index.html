@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon %}
+{% block title %}VaccTrack — Vaccine &amp; Health Record Keeper{% endblock %}
+{% block content %}
+<section class="hero py-5">
+  <div class="row align-items-center g-5 py-4">
+    <div class="col-lg-6">
+      <span class="hero-pill mb-3">{{ icon('shield', 14) }} Private • Secure • Student portfolio project</span>
+      <h1 class="display-5 fw-bold lh-sm mb-3">
+        Your vaccination history, <span class="text-teal">always in one place.</span>
+      </h1>
+      <p class="lead text-secondary mb-4">
+        VaccTrack lets you record every administered dose, see what's upcoming, due today,
+        or overdue, and keep your health profile, allergies, and emergency contacts ready
+        when they matter most.
+      </p>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">{{ icon('user', 18) }} Create free account</a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg px-4">{{ icon('lock', 18) }} Sign in</a>
+      </div>
+      <p class="small text-secondary mt-3 mb-0">
+        No medical advice is provided. Enter dose dates exactly as instructed by your
+        qualified healthcare professional.
+      </p>
+    </div>
+    <div class="col-lg-6">
+      <div class="hero-card card border-0 shadow-sm">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <span class="hero-avatar">{{ icon('syringe', 22) }}</span>
+            <div>
+              <div class="fw-semibold">Dose tracker preview</div>
+              <div class="small text-secondary">Illustrative sample only — not real data</div>
+            </div>
+          </div>
+          <ul class="list-unstyled m-0 hero-list">
+            <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span>Hepatitis B — Dose 2</span><span class="badge badge-success">{{ icon('check', 12) }} Administered</span>
+            </li>
+            <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span>Td Booster — Dose 1</span><span class="badge badge-primary">{{ icon('clock', 12) }} Due today</span>
+            </li>
+            <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+              <span>MMR — Dose 2</span><span class="badge badge-info">{{ icon('calendar', 12) }} Upcoming</span>
+            </li>
+            <li class="d-flex justify-content-between align-items-center py-2">
+              <span>Varicella — Dose 1</span><span class="badge badge-danger">{{ icon('alert', 12) }} Overdue</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="py-5">
+  <h2 class="text-center fw-bold mb-2">Everything a personal health record needs</h2>
+  <p class="text-center text-secondary mb-5">Simple, focused tools — no clutter, no medical claims.</p>
+  <div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+      <div class="card feature-card h-100">
+        <div class="card-body">
+          <div class="feature-icon icon-blue mb-3">{{ icon('syringe', 22) }}</div>
+          <h3 class="h5 fw-semibold">Vaccination records</h3>
+          <p class="text-secondary small mb-0">Add, edit, and track each administered dose with dates and notes. Search, filter, and paginate your history.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card feature-card h-100">
+        <div class="card-body">
+          <div class="feature-icon icon-teal mb-3">{{ icon('bell', 22) }}</div>
+          <h3 class="h5 fw-semibold">Reminders</h3>
+          <p class="text-secondary small mb-0">See upcoming, due-today, and overdue doses at a glance, calculated from dates you enter per your clinician's instructions.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card feature-card h-100">
+        <div class="card-body">
+          <div class="feature-icon icon-red mb-3">{{ icon('alert', 22) }}</div>
+          <h3 class="h5 fw-semibold">Allergies &amp; profile</h3>
+          <p class="text-secondary small mb-0">Keep your blood group, date of birth, health notes, and allergy list with severity up to date.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <div class="card feature-card h-100">
+        <div class="card-body">
+          <div class="feature-icon icon-green mb-3">{{ icon('phone', 22) }}</div>
+          <h3 class="h5 fw-semibold">Emergency contacts</h3>
+          <p class="text-secondary small mb-0">Store the people to call in an emergency, plus a one-click printable vaccination report.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="cta-panel p-4 p-md-5 text-center">
+    <h2 class="fw-bold mb-2">Start keeping records in under a minute</h2>
+    <p class="text-secondary mb-4">Your data belongs to your account only. Every page is protected by sign-in, and every record is verified against your user ID on the server.</p>
+    <div class="d-flex justify-content-center gap-2 flex-wrap">
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-4">Create account</a>
+      <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg px-4">Sign in</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

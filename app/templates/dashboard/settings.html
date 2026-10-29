@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, render_field %}
+{% block title %}Account settings — VaccTrack{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h1 class="h3 fw-bold mb-4">{{ icon('settings', 22) }} Account settings</h1>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white"><h2 class="h5 fw-semibold mb-0">Account details</h2></div>
+      <div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4 text-secondary fw-normal">Name</dt>
+          <dd class="col-sm-8 fw-semibold">{{ current_user.display_name }}</dd>
+          <dt class="col-sm-4 text-secondary fw-normal">Email</dt>
+          <dd class="col-sm-8 fw-semibold">{{ current_user.email }}</dd>
+          <dt class="col-sm-4 text-secondary fw-normal">Member since</dt>
+          <dd class="col-sm-8 fw-semibold">{{ current_user.created_at | datefmt }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white"><h2 class="h5 fw-semibold mb-0">Password reset</h2></div>
+      <div class="card-body">
+        <p class="text-secondary mb-0">
+          Email-based password reset is planned as a future feature. It requires a secure
+          token delivery mechanism (an email provider), which is not connected to this
+          deployment. Until then, please keep your password stored safely.
+        </p>
+      </div>
+    </div>
+
+    <div class="card border-danger-subtle shadow-sm">
+      <div class="card-header bg-danger-subtle">
+        <h2 class="h5 fw-semibold mb-0 text-danger-emphasis">{{ icon('alert', 20) }} Danger zone — delete account</h2>
+      </div>
+      <div class="card-body">
+        <p class="text-secondary">
+          Permanently deletes your account and <strong>all</strong> vaccination records, health profile
+          data, allergies, and emergency contacts. This cannot be undone.
+        </p>
+        <form method="POST" novalidate>
+          {{ form.hidden_tag() }}
+          {{ render_field(form.password) }}
+          {% for error in form.errors.get('password', []) %}
+          <div class="alert alert-danger py-2 small">{{ error }}</div>
+          {% endfor %}
+          <button type="button" class="btn btn-danger" id="deleteAccountBtn"
+                  data-bs-toggle="modal" data-bs-target="#confirmDeleteAccount">
+            {{ icon('trash', 16) }} Delete my account…
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<div class="modal fade" id="confirmDeleteAccount" tabindex="-1" aria-labelledby="confirmDeleteAccountLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteAccountLabel">Delete account permanently?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        All of your health records will be erased. This action cannot be undone.
+        Your password must be entered above to confirm.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Keep my account</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteAccountBtn">Yes, delete everything</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{# Account-deletion confirmation logic lives in static/js/main.js
+   (data-confirm-delete-account) so no inline scripts are needed (CSP). #}

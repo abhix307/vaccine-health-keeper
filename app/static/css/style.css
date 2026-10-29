@@ -1,0 +1,219 @@
+/* ============================================================
+   VaccTrack — Vaccine & Health Record Keeper
+   Light, clean healthcare theme. Blue + teal accents.
+   ============================================================ */
+:root {
+  --vt-blue: #1668dc;
+  --vt-blue-dark: #0f4fa8;
+  --vt-teal: #0d9488;
+  --vt-teal-dark: #0f766e;
+  --vt-ink: #1c2333;
+  --vt-muted: #5b6577;
+  --vt-bg: #f6f8fb;
+  --vt-border: #e5e9f0;
+  --vt-nav: linear-gradient(90deg, #123a6d 0%, #1668dc 55%, #0d9488 100%);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--vt-bg);
+  color: var(--vt-ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Accessible focus indicators everywhere */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.btn:focus-visible,
+.page-link:focus-visible,
+.nav-link:focus-visible {
+  outline: 3px solid rgba(13, 148, 136, 0.55);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 0; top: 0;
+  z-index: 2000;
+  transform: translateY(-150%);
+  background: #fff;
+  padding: .6rem 1rem;
+  border-bottom-right-radius: .5rem;
+  font-weight: 600;
+}
+.skip-link:focus { transform: translateY(0); }
+
+/* ---------- Navbar ---------- */
+.app-navbar {
+  background: var(--vt-nav);
+  box-shadow: 0 1px 6px rgba(16, 42, 84, 0.18);
+}
+.app-navbar .navbar-brand { color: #fff; letter-spacing: .2px; }
+.app-navbar .nav-link {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 500;
+  display: flex; align-items: center; gap: .4rem;
+  border-radius: .5rem;
+  padding: .45rem .8rem;
+}
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link.active { color: #fff; background: rgba(255, 255, 255, 0.14); }
+.app-navbar .navbar-toggler { border-color: rgba(255,255,255,.4); }
+.app-navbar .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,255,255,0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+.brand-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(255,255,255,.16); color: #fff;
+}
+.text-teal { color: var(--vt-teal) !important; }
+.btn-teal { background: #fff; color: var(--vt-teal-dark); font-weight: 600; }
+.btn-teal:hover { background: #d9f4f1; color: var(--vt-teal-dark); }
+.nav-logout { color: #fff; border-color: rgba(255,255,255,.5); }
+.nav-logout:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+/* ---------- Buttons / brand colors ---------- */
+.btn-primary {
+  --bs-btn-bg: var(--vt-blue); --bs-btn-border-color: var(--vt-blue);
+  --bs-btn-hover-bg: var(--vt-blue-dark); --bs-btn-hover-border-color: var(--vt-blue-dark);
+  --bs-btn-active-bg: var(--vt-blue-dark); --bs-btn-active-border-color: var(--vt-blue-dark);
+  --bs-btn-disabled-bg: var(--vt-blue); --bs-btn-disabled-border-color: var(--vt-blue);
+}
+.btn-outline-primary {
+  --bs-btn-color: var(--vt-blue); --bs-btn-border-color: var(--vt-blue);
+  --bs-btn-hover-bg: var(--vt-blue); --bs-btn-hover-border-color: var(--vt-blue);
+  --bs-btn-active-bg: var(--vt-blue-dark); --bs-btn-active-border-color: var(--vt-blue-dark);
+}
+.form-control:focus, .form-select:focus {
+  border-color: #8ab8ee;
+  box-shadow: 0 0 0 .25rem rgba(22, 104, 220, .18);
+}
+
+/* ---------- Cards ---------- */
+.card { border-radius: 14px; }
+.card.shadow-sm { box-shadow: 0 1px 3px rgba(28, 35, 51, .07), 0 6px 18px rgba(28, 35, 51, .05) !important; }
+.card-header { border-bottom: 1px solid var(--vt-border); padding: 1rem 1.25rem; }
+.card-header .h5 svg { vertical-align: -3px; margin-right: .35rem; color: var(--vt-teal); }
+
+/* ---------- Hero / landing ---------- */
+.hero {
+  background:
+    radial-gradient(1200px 500px at 85% -10%, rgba(13, 148, 136, 0.08), transparent 60%),
+    radial-gradient(900px 420px at -10% 110%, rgba(22, 104, 220, 0.08), transparent 60%);
+}
+.hero-pill {
+  display: inline-flex; align-items: center; gap: .45rem;
+  background: #e6f2ff; color: var(--vt-blue-dark);
+  font-size: .8rem; font-weight: 600;
+  padding: .35rem .8rem; border-radius: 999px;
+}
+.hero-card { border-radius: 18px; }
+.hero-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--vt-blue), var(--vt-teal)); color: #fff;
+}
+.hero-list li:last-child { border-bottom: 0 !important; }
+.cta-panel {
+  background: linear-gradient(135deg, #eaf2ff, #e2f5f2);
+  border-radius: 18px;
+  border: 1px solid #d8e4f4;
+}
+.feature-card { transition: transform .15s ease, box-shadow .15s ease; }
+.feature-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(28, 35, 51, .1) !important; }
+.feature-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: 12px; flex: 0 0 auto;
+}
+.icon-blue  { background: #e6f0fe; color: var(--vt-blue); }
+.icon-teal  { background: #dcf3f0; color: var(--vt-teal-dark); }
+.icon-green { background: #e3f6e8; color: #1e7e34; }
+.icon-red   { background: #fdeaea; color: #c0392b; }
+
+/* ---------- Auth ---------- */
+.auth-card { border-radius: 18px; }
+.auth-icon {
+  width: 54px; height: 54px; border-radius: 16px;
+  align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--vt-blue), var(--vt-teal)); color: #fff;
+}
+
+/* ---------- Dashboard ---------- */
+.stat-card .stat-value { font-size: 2rem; font-weight: 800; line-height: 1.1; }
+.stat-card .stat-label { color: var(--vt-muted); font-size: .85rem; font-weight: 500; }
+.reminder-item .feature-icon { width: 38px; height: 38px; border-radius: 10px; }
+.quick-link {
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  text-decoration: none; color: var(--vt-ink);
+  padding: .6rem .3rem; border-radius: 12px;
+}
+.quick-link:hover { background: #f0f5fb; color: var(--vt-blue-dark); }
+
+/* ---------- Status badges ---------- */
+.status-badge { display: inline-flex; align-items: center; gap: .3rem; font-weight: 600; padding: .4em .75em; border-radius: 999px; }
+.badge-success { background: #dcf5e4; color: #166534; }
+.badge-info    { background: #dff3fb; color: #155e75; }
+.badge-primary { background: #e2ecfd; color: #1d4ed8; }
+.badge-danger  { background: #fde3e3; color: #b91c1c; }
+.badge-warning { background: #fef3cd; color: #92400e; }
+
+/* ---------- Tables ---------- */
+.vaccination-table thead th {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--vt-muted); background: #fafbfd;
+  border-bottom: 2px solid var(--vt-border);
+}
+.vaccination-table tbody tr:hover { background: #f6fafd; }
+.record-notes { opacity: .8; }
+
+/* ---------- Allergies & contacts ---------- */
+.allergy-card { border-left: 4px solid var(--vt-border); }
+.allergy-card.severity-mild    { border-left-color: #34a853; }
+.allergy-card.severity-moderate{ border-left-color: #f0a500; }
+.allergy-card.severity-severe  { border-left-color: #d9534f; }
+.contact-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; border-radius: 50%;
+  background: linear-gradient(135deg, #dce9fb, #d5f0ec);
+  color: var(--vt-blue-dark); font-weight: 700;
+}
+
+/* ---------- Empty states ---------- */
+.empty-icon {
+  display: flex; align-items: center; justify-content: center;
+  width: 74px; height: 74px; border-radius: 20px;
+  background: #eef2f8; color: #93a1b8;
+}
+
+/* ---------- Errors ---------- */
+.error-code {
+  font-size: 5.5rem; line-height: 1;
+  background: linear-gradient(135deg, var(--vt-blue), var(--vt-teal));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+
+/* ---------- Footer ---------- */
+.app-footer { background: #101c30; color: #c7d2e2; }
+.app-footer a { color: #9fd8d0; }
+
+/* ---------- Flash stack ---------- */
+.flash-stack .alert { border-radius: 12px; }
+
+/* ---------- Print styles ---------- */
+@media print {
+  body { background: #fff !important; }
+  .no-print, nav, footer, .btn, .flash-stack, form button, .filter-card, .pagination { display: none !important; }
+  .app-navbar, .app-footer { display: none !important; }
+  .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+  .report-card { border: none !important; }
+  .report-table thead th { background: #f1f3f5 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { text-decoration: none !important; color: #000 !important; }
+  main .container { max-width: 100% !important; padding: 0 !important; }
+  @page { margin: 1.5cm; }
+}

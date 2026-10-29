@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% from "macros.html" import icon, empty_state, status_badge %}
+{% block title %}Dashboard — VaccTrack{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <div>
+    <h1 class="h3 fw-bold mb-1">Hello, {{ current_user.display_name }} 👋</h1>
+    <p class="text-secondary mb-0">Here's an overview of your health records.</p>
+  </div>
+  <a href="{{ url_for('vaccinations.create') }}" class="btn btn-primary no-print">{{ icon('plus', 16) }} Add vaccination</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="stat-value">{{ stats.total }}</div>
+            <div class="stat-label">Doses administered</div>
+          </div>
+          <span class="feature-icon icon-green">{{ icon('check', 22) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="stat-value">{{ stats.upcoming }}</div>
+            <div class="stat-label">Upcoming</div>
+          </div>
+          <span class="feature-icon icon-blue">{{ icon('calendar', 22) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="stat-value">{{ stats.due_today }}</div>
+            <div class="stat-label">Due today</div>
+          </div>
+          <span class="feature-icon icon-teal">{{ icon('clock', 22) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <div>
+            <div class="stat-value {{ 'text-danger' if stats.overdue }}">{{ stats.overdue }}</div>
+            <div class="stat-label">Overdue</div>
+          </div>
+          <span class="feature-icon icon-red">{{ icon('alert', 22) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 fw-semibold mb-0">{{ icon('bell', 18) }} Reminders</h2>
+        <a href="{{ url_for('vaccinations.index') }}" class="small">View all</a>
+      </div>
+      <div class="card-body">
+        {% if upcoming %}
+        <ul class="list-unstyled m-0">
+          {% for vacc, status in upcoming %}
+          <li class="reminder-item d-flex justify-content-between align-items-center gap-2 py-3 {{ 'border-bottom' if not loop.last }}">
+            <div class="d-flex align-items-center gap-3">
+              <span class="feature-icon {{ {'overdue':'icon-red','due_today':'icon-teal','upcoming':'icon-blue'}[status] }}">
+                {{ icon({'overdue':'alert','due_today':'clock','upcoming':'calendar'}[status], 18) }}
+              </span>
+              <div>
+                <a href="{{ url_for('vaccinations.detail', record_id=vacc.id) }}" class="fw-semibold text-decoration-none">{{ vacc.vaccine_name }}</a>
+                <div class="small text-secondary">Next dose ({{ vacc.dose_number + 1 }}) — {{ vacc.next_dose_date | datefmt }}</div>
+              </div>
+            </div>
+            {{ status_badge(status, {'administered':'Administered','upcoming':'Upcoming','due_today':'Due today','overdue':'Overdue'}) }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        {{ empty_state("Nothing due right now", "You have no upcoming, due-today, or overdue doses. Add a next-dose date to any record to get a reminder here.", icon_name='bell') }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h2 class="h5 fw-semibold mb-0">{{ icon('list', 18) }} Recent history</h2>
+        <a href="{{ url_for('vaccinations.index') }}" class="small">View all</a>
+      </div>
+      <div class="card-body">
+        {% if recent %}
+        <ul class="list-unstyled m-0">
+          {% for vacc in recent %}
+          <li class="d-flex justify-content-between align-items-center py-2 {{ 'border-bottom' if not loop.last }}">
+            <a href="{{ url_for('vaccinations.detail', record_id=vacc.id) }}" class="text-decoration-none">
+              <span class="fw-semibold">{{ vacc.vaccine_name }}</span>
+              <span class="text-secondary small">· Dose {{ vacc.dose_number }}</span>
+            </a>
+            <span class="text-secondary small">{{ vacc.vaccination_date | datefmt }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-secondary mb-0 small">No vaccination records yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white"><h2 class="h5 fw-semibold mb-0">{{ icon('heart', 18) }} Your health file</h2></div>
+      <div class="card-body">
+        <div class="row g-2 text-center">
+          <div class="col-4">
+            <a href="{{ url_for('health.profile') }}" class="quick-link">
+              <span class="feature-icon icon-teal mx-auto">{{ icon('user', 20) }}</span>
+              <span class="small fw-semibold">Profile</span>
+            </a>
+          </div>
+          <div class="col-4">
+            <a href="{{ url_for('health.allergies') }}" class="quick-link">
+              <span class="feature-icon icon-red mx-auto">{{ icon('alert', 20) }}</span>
+              <span class="small fw-semibold">Allergies ({{ allergy_count }})</span>
+            </a>
+          </div>
+          <div class="col-4">
+            <a href="{{ url_for('health.contacts') }}" class="quick-link">
+              <span class="feature-icon icon-blue mx-auto">{{ icon('phone', 20) }}</span>
+              <span class="small fw-semibold">Contacts ({{ contact_count }})</span>
+            </a>
+          </div>
+        </div>
+        <hr>
+        <a href="{{ url_for('vaccinations.report') }}" class="btn btn-outline-secondary btn-sm w-100">{{ icon('print', 16) }} Printable vaccination report</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
