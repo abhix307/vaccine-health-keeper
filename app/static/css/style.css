@@ -779,3 +779,64 @@ a:hover { color: var(--vt-blue-dark); }
         letter-spacing: 0.04em;
     }
 }
+
+
+
+
+/* Vaccination records page polish */
+.vaccination-table {
+    --bs-table-hover-bg: rgba(20, 184, 166, 0.06);
+    margin-bottom: 0;
+}
+
+.vaccination-table thead th {
+    background: #f3f8fa;
+    color: #526575;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    padding: 1rem 1.1rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-bottom: 1px solid #e2ebef;
+}
+
+.vaccination-table tbody td {
+    padding: 1rem 1.1rem;
+    border-color: #edf2f5;
+    vertical-align: middle;
+}
+
+.vaccination-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.filter-card {
+    border-radius: 14px;
+}
+
+.vaccination-table a.fw-semibold {
+    color: #167d80;
+    transition: color 0.2s ease;
+}
+
+.vaccination-table a.fw-semibold:hover {
+    color: #105e61;
+    text-decoration: underline !important;
+}
+
+@media (max-width: 576px) {
+    .vaccination-table thead th,
+    .vaccination-table tbody td {
+        padding: 0.75rem 0.6rem;
+        font-size: 0.85rem;
+    }
+
+    .vaccination-table thead th {
+        font-size: 0.68rem;
+    }
+
+    .filter-card .card-body {
+        padding: 1rem;
+    }
+}
