@@ -187,3 +187,20 @@
   </div>
 </div>
 {% endblock %}
+
+
+
+
+
+/* Recent History dashboard improvements */
+@media (max-width: 576px) {
+    .card:has(.list-unstyled a[href*="vaccinations.detail"]) .card-body li {
+        gap: 0.5rem;
+    }
+
+    .card:has(.list-unstyled a[href*="vaccinations.detail"]) .card-body li a {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+}
+
