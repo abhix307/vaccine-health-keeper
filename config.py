@@ -32,12 +32,22 @@ class Config:
 
     # Session / cookie security
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = "Lax"
-    # Must be True behind HTTPS in production (set via env var).
-    SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
+    # "Lax" by default. Set SESSION_COOKIE_SAMESITE=None when the app is
+    # embedded in a cross-site iframe (e.g. sandboxed live previews); that
+    # requires Secure=True, which is then forced automatically. CSRF token
+    # protection remains fully in force either way.
+    SESSION_COOKIE_SAMESITE = os.environ.get("SESSION_COOKIE_SAMESITE", "Lax")
+    if SESSION_COOKIE_SAMESITE not in ("Lax", "Strict", "None"):
+        SESSION_COOKIE_SAMESITE = "Lax"
+    # Must be True behind HTTPS in production (set via env var), and is
+    # mandatory whenever SameSite=None.
+    SESSION_COOKIE_SECURE = (
+        SESSION_COOKIE_SAMESITE == "None"
+        or os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
+    )
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
     REMEMBER_COOKIE_HTTPONLY = True
-    REMEMBER_COOKIE_SAMESITE = "Lax"
+    REMEMBER_COOKIE_SAMESITE = SESSION_COOKIE_SAMESITE
     REMEMBER_COOKIE_SECURE = SESSION_COOKIE_SECURE
 
     # UI
@@ -89,6 +99,10 @@ class ProductionConfig(Config):
         # Fail safe: force secure cookies unless explicitly disabled
         # (e.g. when running plain HTTP behind a local proxy during setup).
         if os.environ.get("SESSION_COOKIE_SECURE") is None:
+            self.SESSION_COOKIE_SECURE = True
+            self.REMEMBER_COOKIE_SECURE = True
+        # SameSite=None always requires Secure, in every environment.
+        if self.SESSION_COOKIE_SAMESITE == "None":
             self.SESSION_COOKIE_SECURE = True
             self.REMEMBER_COOKIE_SECURE = True
 

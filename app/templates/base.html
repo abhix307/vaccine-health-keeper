@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-bs-theme="light">
+<html lang="en" data-bs-theme="dark">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,7 +7,7 @@
   <title>{% block title %}Vaccine &amp; Health Record Keeper{% endblock %}</title>
   <meta name="description" content="A student portfolio project for securely tracking vaccination history, health profile, allergies, and emergency contacts.">
   <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap.min.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v=2) }}">
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg') }}" type="image/svg+xml">
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -16,8 +16,8 @@
   <nav class="navbar navbar-expand-lg app-navbar sticky-top no-print" aria-label="Main navigation">
     <div class="container">
       <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{{ url_for('index') }}">
-        <span class="brand-mark">{{ icon('shield', 22) }}</span>
-        <span>Vacc<span class="text-teal">Track</span></span>
+        <span class="brand-mark">{{ icon('shield', 20) }}</span>
+        <span>VACC<span class="brand-dot">•</span>TRACK</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
               aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,7 @@
 
   {% block modals %}{% endblock %}
   <script src="{{ url_for('static', filename='vendor/bootstrap.bundle.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js', v=2) }}"></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -27,6 +27,27 @@ def test_postgres_url_scheme_is_normalized(monkeypatch):
     assert cfg._database_uri() == "postgresql://u:p@host:5432/db"
 
 
+def test_samesite_none_forces_secure_cookies(monkeypatch):
+    """SameSite=None is only valid (and only safe) together with Secure."""
+    monkeypatch.setenv("SESSION_COOKIE_SAMESITE", "None")
+    monkeypatch.delenv("SESSION_COOKIE_SECURE", raising=False)
+    import importlib
+    import config as cfg
+    importlib.reload(cfg)
+    try:
+        assert cfg.Config.SESSION_COOKIE_SAMESITE == "None"
+        assert cfg.Config.SESSION_COOKIE_SECURE is True
+        assert cfg.Config.REMEMBER_COOKIE_SECURE is True
+    finally:
+        monkeypatch.delenv("SESSION_COOKIE_SAMESITE", raising=False)
+        importlib.reload(cfg)
+
+
+def test_samesite_defaults_to_lax():
+    import config as cfg
+    assert cfg.Config.SESSION_COOKIE_SAMESITE == "Lax"
+
+
 def test_production_forces_secure_cookies_by_default(monkeypatch):
     import config as cfg
     monkeypatch.setattr(cfg.Config, "SECRET_KEY", "x" * 64)
